@@ -1,4 +1,4 @@
-Project: BuyGotHope (Loosely Translated from 有没有希望)
+Project: Got Buy Got Hope (Loosely Translated from 有买有希望)
 
 Idea:
 Telegram Bot that can either be subscribed to or added to groups to check the next jackpot and draw amount.
@@ -8,6 +8,15 @@ Planned Technical Implementation Steps:
 
 1. Test script locally.
 2. Upload it to AWS Lambda and validate.
+
+Branches Overview:
+
+1. Main
+2. playwright-docker-lambda
+
+Intitial Approach: Dockerise Playwright and try to run it entirely within Lambda. Docker Image was hosted on Amazon ECR.
+Although it was working, it would not be a fully free approach, costing about ~$0.02USD/month.
+Albeit marginal, I opted for a workaround for a fully-free solution so that this solution can run in perpetuity.
 
 Challenges Faced:
 
