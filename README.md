@@ -11,95 +11,49 @@ Planned Technical Implementation Steps:
 
 Branches Overview:
 
-1. Main
-2. playwright-docker-lambda
+1. Main - Browserless + Playwright + Lambda (current, working)
+2. playwright-docker-lambda - Full Playwright + Chromium in Lambda (deprecated)
 
 Intitial Approach: Dockerise Playwright and try to run it entirely within Lambda. Docker Image was hosted on Amazon ECR.
 Although it was working, it would not be a fully free approach, costing about ~$0.02USD/month.
-Albeit marginal, I opted for a workaround for a fully-free solution so that this solution can run in perpetuity.
+Albeit marginal, I opted for a workaround (Browserless) for a fully-free solution so that this solution can run in perpetuity.
+
+At the time of development (December 2025), Browserless offered a free tier that was adequate for low-frequency, personal automation use cases such as this project.
 
 Challenges Faced:
 
-1. ZIP file uploaded to AWS did not work.
-2. Dockerising had many difficulties as listed below:
+1. Docker Desktop produced an OCI image index (multi-arch), which AWS Lambda does not support.
 
-a.
+Solution:
 
-```
- module 'chromium' has no attribute 'executable_path'
-TargetClosedError: Browser.new_page: Target page, context or browser has been closed
-```
-
-b.
+- Force linux/amd64 and disable provenance & SBOM
+  Error Message:
 
 ```
-GLIBC_2.27 not found
-GLIBC_2.28 not found
+The image manifest, config or layer media type for the source image 383675638173.dkr.ecr.ap-southeast-1.amazonaws.com/toto-browserless-lambda@sha256:9e750709f1c44b00b3142cdb44628d55dfac072ede6330f9bb983a20bd5333ca is not supported.
 ```
 
-c.
+Solution:
+a. changing docker file to CMD ["python", "-m", "awslambdaric", "lambda_function.lambda_handler"]
+b. Building docker image differently via the command below:
 
 ```
-exec: "awslambdaric": executable file not found in $PATH
-Runtime API server failed to listen
-AWS_LAMBDA_RUNTIME_API missing
+docker buildx build \
+  --platform linux/amd64 \
+  --provenance=false \
+  --sbom=false \
+  -t 383675638173.dkr.ecr.ap-southeast-1.amazonaws.com/toto-browserless-lambda:latest \
+  --push .
 ```
 
-d.
-
-```
-Unable to import module 'lambda_function'
-```
-
-e. Cold Start
-
-3. Using public ECR instead of private ECR for free storage
-
-Solutions:
-
-1. Dockerise code with all dependencies.
-2. a. Added Lambda-compatible Chromium flags
-   b. Used a different base image
-
-```
-FROM mcr.microsoft.com/playwright/python:v1.45.0-jammy
-```
-
-c. Installed awslambdaric and changed command to
-
-```
-CMD ["python3", "-m", "awslambdaric", "lambda_function.lambda_handler"]
-```
-
-d. Changed working directory
-
-```
-WORKDIR /var/task
-COPY lambda_function.py .
-```
-
-e. Caching Chromium in /tmp
-
-3. Grant public ECR access to existing AWS IAM role with the following methods:
-   Method 1:
+2. Testing Lambda
+   Error Message:
 
 ```
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "ECRPublicAccess",
-            "Effect": "Allow",
-            "Action": [
-                "ecr-public:*",
-                "sts:GetServiceBearerToken"
-            ],
-            "Resource": "*"
-        }
-    ]
+  "errorMessage": "2025-12-21T06:14:47.123Z 9eef0a0b-f015-40aa-995a-83faae5f105a Task timed out after 3.01 seconds"
 }
 ```
 
-Method 2: Add proper AWS-Managed Policy
-IAM --> Users --> (Username) --> Add permissions --> Attach Policies Directly
-Permission to use in this case: AmazonElasticContainerRegistryPublicFullAccess
+Solution: Increase timeout and Memory. Successful.
+![Lambda execution success](screenshots/TEST_SUCCESS.png)

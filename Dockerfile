@@ -4,9 +4,9 @@ RUN pip install awslambdaric
 
 WORKDIR /var/task
 
-COPY function.py .
+COPY lambda_function.py .
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-CMD ["python", "-m", "awslambdaric", "function.lambda_handler"]
+CMD ["python", "-m", "awslambdaric", "lambda_function.lambda_handler"]

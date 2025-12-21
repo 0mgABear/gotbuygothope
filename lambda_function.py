@@ -15,7 +15,8 @@ def lambda_handler(event, context):
     try:
         with sync_playwright() as p:
             browser = p.chromium.connect_over_cdp(ws)
-            page = browser.new_page()
+            context = browser.new_context()
+            page = context.new_page()
 
             url = "https://www.singaporepools.com.sg/en/product/pages/toto_results.aspx"
             page.goto(url)
@@ -35,14 +36,11 @@ def lambda_handler(event, context):
     draw_match = re.search(r"Next Draw\s*([\w, ]+\d{4}\s*,\s*\d{1,2}\.\d{2}pm)", text)
     draw_date = draw_match.group(1) if draw_match else None
 
-    print("Jackpot:", jackpot)
-    print("Draw Date:", draw_date)
-
     return {
         "statusCode": 200,
         "body": {
-            "next_jackpot": jackpot,
-            "next_draw": draw_date
+            "Next Jackpot": jackpot,
+            "Next Draw": draw_date
         }
     }
 
