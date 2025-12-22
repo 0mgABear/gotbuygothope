@@ -8,6 +8,10 @@ Planned Technical Implementation Steps:
 
 1. Test script locally.
 2. Upload it to AWS Lambda and validate.
+3. Telegram Implementation
+   a. Integtrate with Telegram API
+   b. Validate with private chat - ensure that it is working
+   c. Validate bot functionality in a channel
 
 Branches Overview:
 
@@ -57,3 +61,7 @@ docker buildx build \
 
 Solution: Increase timeout and Memory. Successful.
 ![Lambda execution success](screenshots/TEST_SUCCESS.png)
+
+Completion Date: 22 Dec 2025
+
+The bot will have a daily reminder at 12PM about when is the next TOTO Jackpot.
