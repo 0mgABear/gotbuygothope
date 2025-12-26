@@ -3,6 +3,7 @@ import re
 import requests
 from playwright.sync_api import sync_playwright
 from dotenv import load_dotenv
+from datetime import date
 
 load_dotenv()
 
@@ -35,9 +36,20 @@ def lambda_handler(event, context):
 
     draw_match = re.search(r"Next Draw\s*([\w, ]+\d{4}\s*,\s*\d{1,2}\.\d{2}pm)", text)
     draw_date = draw_match.group(1) if draw_match else "N/A"
+    parts = draw_date.split(",")
+    date_part = parts[1].strip()
+    time = parts[2].strip()
+
+    if date_part ==  date.today().strftime('%d %b %Y'):
+        msg = f"🎰 TOTO Update\nNext Jackpot: {jackpot}\nNext Draw: Tonight, {time}"
+    else:
+        msg = f"🎰 TOTO Update\nNext Jackpot: {jackpot}\nNext Draw: {draw_date}"
+    
 
     msg = f"🎰 TOTO Update\nNext Jackpot: {jackpot}\nNext Draw: {draw_date}"
     send_telegram(msg)
 
     return {"statusCode": 200}
 
+if __name__ == "__main__":
+    lambda_handler({}, None)
