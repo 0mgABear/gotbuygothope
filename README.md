@@ -72,26 +72,35 @@ The bot will have a daily reminder at 12PM about when is the next TOTO Jackpot.
 
 1. Login Docker to ECR
 
-````aws ecr get-login-password --region ap-southeast-1 \
-| docker login --username AWS --password-stdin 383675638173.dkr.ecr.ap-southeast-1.amazonaws.com```
+```aws ecr get-login-password --region ap-southeast-1 \
+| docker login --username AWS --password-stdin 383675638173.dkr.ecr.ap-southeast-1.amazonaws.com
+```
 
 2. Building and Pushing Docker Image
-```docker buildx build \
+
+```
+docker buildx build \
   --platform linux/amd64 \
   --provenance=false \
   --sbom=false \
   -t 383675638173.dkr.ecr.ap-southeast-1.amazonaws.com/toto-browserless-lambda:latest \
-  --push .```
+  --push .
+```
 
 3. Update Lambda to new image
 
-```aws lambda update-function-code \
+```
+aws lambda update-function-code \
   --function-name <YOUR_LAMBDA_FUNCTION_NAME> \
-  --image-uri 383675638173.dkr.ecr.ap-southeast-1.amazonaws.com/toto-browserless-lambda:latest```
+  --image-uri 383675638173.dkr.ecr.ap-southeast-1.amazonaws.com/toto-browserless-lambda:latest
+```
 
 ## Updates
 
 1. Quality of Life Update
    Date Check. Bot runs everyday, will perform a check if the next draw date is the date of execution.
    If so, bot will ping that the draw is "Tonight, XX timing" rather than the generic Next Draw: XX Day, XX Timing.
-````
+
+```
+
+```
