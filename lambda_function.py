@@ -45,8 +45,6 @@ def lambda_handler(event, context):
     else:
         msg = f"🎰 TOTO Update\nNext Jackpot: {jackpot}\nNext Draw: {draw_date}"
     
-
-    msg = f"🎰 TOTO Update\nNext Jackpot: {jackpot}\nNext Draw: {draw_date}"
     send_telegram(msg)
 
     return {"statusCode": 200}
