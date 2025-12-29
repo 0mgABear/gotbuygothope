@@ -40,7 +40,12 @@ The image manifest, config or layer media type for the source image 383675638173
 ```
 
 Solution:
-a. changing docker file to CMD ["python", "-m", "awslambdaric", "lambda_function.lambda_handler"]
+a. changing docker file to:
+
+```
+CMD ["python", "-m", "awslambdaric", "lambda_function.lambda_handler"]
+```
+
 b. Building docker image differently via the command below:
 
 ```
@@ -52,8 +57,7 @@ docker buildx build \
   --push .
 ```
 
-2. Testing Lambda
-   Error Message:
+2. Testing Lambda Error Message:
 
 ```
 {
@@ -72,8 +76,9 @@ The bot will have a daily reminder at 12PM about when is the next TOTO Jackpot.
 
 1. Login Docker to ECR
 
-```aws ecr get-login-password --region ap-southeast-1 \
-| docker login --username AWS --password-stdin 383675638173.dkr.ecr.ap-southeast-1.amazonaws.com
+```
+aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 383675638173.dkr.ecr.ap-southeast-1.amazonaws.com
+
 ```
 
 2. Building and Pushing Docker Image
@@ -100,7 +105,3 @@ aws lambda update-function-code \
 1. Quality of Life Update
    Date Check. Bot runs everyday, will perform a check if the next draw date is the date of execution.
    If so, bot will ping that the draw is "Tonight, XX timing" rather than the generic Next Draw: XX Day, XX Timing.
-
-```
-
-```
