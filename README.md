@@ -105,3 +105,9 @@ aws lambda update-function-code \
 1. Quality of Life Update
    Date Check. Bot runs everyday, will perform a check if the next draw date is the date of execution.
    If so, bot will ping that the draw is "Tonight, XX timing" rather than the generic Next Draw: XX Day, XX Timing.
+
+2. Performance Enhancements
+
+Although the site data is loaded dynamically using JS, some of the data is loaded into identifable DOM elements with labels and classes.
+With the aid of this, improvements can be made to retrieve the data via such labels instead of a REGEX search, which may not be as robust and accurate.
+This also avoids unnecessary full page text processing.
