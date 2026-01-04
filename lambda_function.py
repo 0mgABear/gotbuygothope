@@ -28,8 +28,8 @@ def lambda_handler(event, context):
 
         url = "https://www.singaporepools.com.sg/en/product/pages/toto_results.aspx"
         page.goto(url, wait_until="domcontentloaded", timeout=20000)
-        text = page.inner_text("body")
-        jackpot = page.locator("xpath=//div[normalize-space()='Next Jackpot']/following-sibling::span[1]").inner_text().strip()
+        next_jackpot = page.locator("xpath=//div[normalize-space()='Next Jackpot']/following-sibling::span[1]").inner_text().strip()
+        jackpot = "$" + "".join(c for c in next_jackpot if c.isdigit() or c == ",")
         draw_date = page.locator("div.toto-draw-date").first.inner_text().strip()
 
     parts = draw_date.split(",")
@@ -39,7 +39,6 @@ def lambda_handler(event, context):
         msg = f"🎰 TOTO Update\nNext Jackpot: {jackpot}\nNext Draw: Tonight, {time_part}"
     else:
         msg = f"🎰 TOTO Update\nNext Jackpot: {jackpot}\nNext Draw: {draw_date}"
-        print(f"test{time_part}") 
     
     send_telegram(msg)
 
