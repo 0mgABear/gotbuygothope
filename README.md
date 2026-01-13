@@ -111,3 +111,7 @@ aws lambda update-function-code \
 Although the site data is loaded dynamically using JS, some of the data is loaded into identifable DOM elements with labels and classes.
 With the aid of this, improvements can be made to retrieve the data via such labels instead of a REGEX search, which may not be as robust and accurate.
 This also avoids unnecessary full page text processing.
+
+3. Introduction of Witty Comment
+
+Using Gemini API (as there is a small free tier), we can generate a comment to "encourage" people to buy the TOTO Jackpot.
