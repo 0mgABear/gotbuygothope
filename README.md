@@ -120,3 +120,7 @@ Using Gemini API (as there is a small free tier), we can generate a comment to "
 
 This was a requested feature, which is also a key quality-of-life update. At date of running, if there is a result, the bot will also check for results.
 It will return the winning numbers, additional number, number of winner(s) and details of the winning ticket(s).
+
+5. Quality of life change: Update Telegram Message when there are no winners instead of returning:
+   `Group 1: - each (- winner(s))`
+   which is not so aesthetic.
