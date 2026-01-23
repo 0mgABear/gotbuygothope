@@ -3,6 +3,7 @@ import requests
 from playwright.sync_api import sync_playwright
 from dotenv import load_dotenv
 from datetime import date
+import time, random
 
 load_dotenv()
 
@@ -19,7 +20,9 @@ def generate_comment(jackpot_value):
 
     prompt = (
     f"TOTO jackpot ${jackpot_value:,}. "
-    "Write ONE Singlish sentence (10–14 words) encouraging to buy, with increasing excitement for bigger jackpots. "
+    "Write ONE accurate Singlish sentence (10–14 words) encouraging people to try their luck and buy the current jackpot. "
+    "Ensure punctuations are apt and correct. "
+    "Increase excitement for bigger jackpot values. "
     "No emojis, no profanity."
     )   
 
@@ -32,16 +35,40 @@ def generate_comment(jackpot_value):
     }
     data={}
     try:
-        r = requests.post(url, headers=headers, json=payload, timeout=10)
-        r.raise_for_status()
-        data = r.json()
-        return data["candidates"][0]["content"]["parts"][0]["text"].strip()
-    except Exception as e:
-        print(e)
-        try:
-            return data.get("candidates", [{}])[0].get("text", "").strip()
-        except Exception:
+        for i in range(5):
+            r = requests.post(url, headers=headers, json=payload, timeout=10)
+
+            if r.status_code in (429, 500, 502, 503, 504):
+                sleep = (2 ** i) + random.random()
+                print(f"[gemini] HTTP {r.status_code}, retry {i+1}/5 in {sleep:.2f}s")
+                print(f"[gemini] body={r.text[:500]}")
+                time.sleep(sleep)
+                continue
+
+            break
+
+        if not r.ok:
+            print(f"[gemini] HTTP {r.status_code}")
+            print(f"[gemini] headers={dict(r.headers)}")
+            print(f"[gemini] body={r.text[:2000]}")
             return ""
+
+        data = r.json()
+
+        text = (
+            data.get("candidates", [{}])[0]
+                .get("content", {})
+                .get("parts", [{}])[0]
+                .get("text", "")
+        ).strip()
+
+        if not text:
+            print(f"[gemini] empty text extracted. raw={str(data)[:2000]}")
+        return text
+
+    except Exception as e:
+        print(f"[gemini] exception: {repr(e)}")
+        return ""
 
 def send_telegram(text):
     token = os.environ["TELEGRAM_BOT_TOKEN"]
@@ -173,4 +200,4 @@ def lambda_handler(event, context):
         return {"statusCode": 200}
 
 if __name__ == "__main__":
-    lambda_handler({"mode": "results"}, None)
+    lambda_handler({"mode": "next_draw"}, None)

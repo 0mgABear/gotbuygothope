@@ -124,3 +124,15 @@ It will return the winning numbers, additional number, number of winner(s) and d
 5. Quality of life change: Update Telegram Message when there are no winners instead of returning:
    `Group 1: - each (- winner(s))`
    which is not so aesthetic.
+
+6. Improve robustness of Gemini Generation Logic.
+   Encountered a transient error on 23/01/2026 with the folllowing logs:
+
+```
+503 Server Error: Service Unavailable for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+```
+
+Further local testing revealed that it was working, re-testing by invoking directly on AWS Lambda also generated the Gemini comment.
+Preliminary conclusions: one-off errror.
+
+Fix taken (retry mechanism) to improve the robustness against such errors.
