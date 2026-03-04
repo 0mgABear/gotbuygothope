@@ -127,7 +127,7 @@ def lambda_handler(event, context):
         draw_date = datetime.strptime(date_part, "%d %b %Y").date()
 
         if time_part == "6.30pm":
-            run_at_sg = datetime.combine(draw_date, datetime.strptime("19:00", "%H:%M").time())
+            run_at_sg = datetime.combine(draw_date, datetime.strptime("19:30", "%H:%M").time())
             schedule_results_eventbridge(run_at_sg)
         elif time_part == "9.30pm":
             run_at_sg = datetime.combine(draw_date, datetime.strptime("23:05", "%H:%M").time())
